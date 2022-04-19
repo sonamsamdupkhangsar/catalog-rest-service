@@ -1,4 +1,4 @@
-# catapp-rest-service
+# catalog-rest-service
 This project exposes the rest services for the app catalog project.
 The rest service api is developed in reactive Java with Spring WebFlux.
 
@@ -17,11 +17,11 @@ mvn spring-boot:run  -Dspring-boot.run.arguments="--POSTGRES_USERNAME=dummy \
 Build docker image using included Dockerfile.
 
 
-`docker build -t ghcr.io/catapp-rest-service:latest .` 
+`docker build -t ghcr.io/catalog-rest-service:latest .` 
 
 ## Push Docker image to repository
 
-`docker push ghcr.io/catapp-rest-service:latest`
+`docker push ghcr.io/catalog-rest-service:latest`
 
 ## Deploy Docker image locally
 

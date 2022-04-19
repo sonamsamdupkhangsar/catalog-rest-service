@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>me.sonam</groupId>
-    <artifactId>catapp-rest-service</artifactId>
+    <artifactId>catalog-rest-service</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>catapp-rest-service</name>
-    <description>catapp-rest-service rest api for vue front end</description>
+    <name>catalog-rest-service</name>
+    <description>catalog-rest-service rest api for vue front end</description>
 
     <dependencies>
         <dependency>
@@ -153,7 +153,7 @@
         <repository>
             <id>github</id>
             <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/sonamsamdupkhangsar/catapp-rest-service</url>
+            <url>https://maven.pkg.github.com/sonamsamdupkhangsar/catalog-rest-service</url>
         </repository>
     </distributionManagement>
 
