@@ -12,6 +12,6 @@ WORKDIR /app
 COPY --from=build /app/target/catalog-rest-service-1.0-SNAPSHOT.jar /app/catalog-rest-service.jar
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "-jar", "/app/catlog-rest-service.jar"]
+ENTRYPOINT [ "java", "-jar", "/app/catalog-rest-service.jar"]
 
 LABEL org.opencontainers.image.source https://github.com/sonamsamdupkhangsar/catalog-rest-service
