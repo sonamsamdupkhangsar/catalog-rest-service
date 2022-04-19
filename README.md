@@ -1,14 +1,13 @@
-# project-rest-service
-
-This is a template project for starting a Spring Webflux with R2DBC for Posgresql Maven based project.
-
+# catapp-rest-service
+This project exposes the rest services for the app catalog project.
+The rest service api is developed in reactive Java with Spring WebFlux.
 
 ## Run locally
 
 ```
 mvn spring-boot:run  -Dspring-boot.run.arguments="--POSTGRES_USERNAME=dummy \
                       --POSTGRES_PASSWORD=dummy \
-                      --POSTGRES_DBNAME=account \
+                      --POSTGRES_DBNAME=catlog \
                       --POSTGRES_SERVICE=localhost:5432"
 ```
  
@@ -18,26 +17,20 @@ mvn spring-boot:run  -Dspring-boot.run.arguments="--POSTGRES_USERNAME=dummy \
 Build docker image using included Dockerfile.
 
 
-`docker build -t imageregistry/project-rest-service:1.0 .` 
+`docker build -t ghcr.io/catapp-rest-service:latest .` 
 
 ## Push Docker image to repository
 
-`docker push imageregistry/project-rest-service:1.0`
+`docker push ghcr.io/catapp-rest-service:latest`
 
 ## Deploy Docker image locally
 
 `docker run -e POSTGRES_USERNAME=dummy \
- -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=account \
+ -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=catlog \
   -e POSTGRES_SERVICE=localhost:5432 \
  --publish 8080:8080 imageregistry/project-rest-service:1.0`
 
 
-## Installation on Kubernetes
-Use my Helm chart here @ [sonam-helm-chart](https://github.com/sonamsamdupkhangsar/sonam-helm-chart):
-
-```
-helm install project-api sonam/mychart -f values.yaml --version 0.1.12 --namespace=yournamespace
-```
 
 ##Instruction for port-forwarding database pod
 ```
