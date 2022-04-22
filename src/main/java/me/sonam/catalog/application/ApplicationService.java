@@ -93,11 +93,26 @@ public class ApplicationService implements ApplicationBehavior {
     public Flux<EnvironmentAssociation> getEnvironmentAssociationForApplicationId(UUID applicationId) {
         Mono<Application> applicationMono = applicationRepository.findById(applicationId);
 
-        Mono<Cluster> clusterMono = applicationMono.flatMap(application ->  clusterRepository.findById(application.getPlatformId()));
+
+        Mono<Cluster> clusterMono = applicationMono.flatMap(application -> {
+            if (application.getPlatformId() != null) {
+                return clusterRepository.findById(application.getPlatformId());
+            }
+            else {
+                return Mono.just(new Cluster());
+            }
+        });
 
 
         Flux<Environment> environmentFlux = clusterMono.flatMapMany(cluster ->
-                environmentRepository.findByClusterIdOrderBySortOrderAsc(cluster.getId()));
+        {
+            if (cluster.getId() == null) {
+                return environmentRepository.findAll();
+            }
+            else {
+                return environmentRepository.findByClusterIdOrderBySortOrderAsc(cluster.getId());
+            }
+        });
 
         Mono<List<Environment>> monoEnvList = environmentFlux.collectList().flatMap(environments -> {
             List<Environment> envList = new ArrayList<>();
