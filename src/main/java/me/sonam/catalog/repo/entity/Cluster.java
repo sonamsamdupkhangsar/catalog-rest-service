@@ -69,6 +69,10 @@ public class Cluster implements Persistable<UUID> {
         this.environmentFlux = environmentFlux;
     }
 
+    public void setIsNew(boolean val) {
+        this.isNew = val;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -88,6 +92,7 @@ public class Cluster implements Persistable<UUID> {
         return "Cluster{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", isNew='" + isNew + '\'' +
                 '}';
     }
 }

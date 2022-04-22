@@ -65,7 +65,12 @@ public class ClusterService implements ClusterBehavior{
 
     @Override
     public Mono<Cluster> update(Cluster cluster) {
-        LOG.info("update cluster");
+        LOG.info("update cluster: {}", cluster);
+
+        if (cluster.getId() == null) {
+            cluster.setIsNew(true);
+            LOG.info("set new to true when id is null");
+        }
         return clusterRepository.save(cluster).map(cluster1 -> {
             LOG.info("saved cluster");
             return cluster1;
