@@ -210,16 +210,17 @@ public class ApplicationService implements ApplicationBehavior {
         LOG.info("environmentAssociations.size: {}, list: {}", environmentAssociations.size(), environmentAssociations);
         for(EnvironmentAssociation environmentAssociation : environmentAssociations) {
             if (environmentAssociation.isAssociated()) {
-                LOG.info("associated environmentAssociation {}", environmentAssociation);
+                LOG.info("need to save association for environmentAssociation: {}", environmentAssociation);
                 applicationEnvironmentRepository.existsByApplicationIdAndEnvironmentId(applicationId, environmentAssociation.getEnvironmentId())
                         .doOnNext(aBoolean -> {
-                            LOG.info("exist?: {}", aBoolean);
+                            LOG.info("if it's false then save: {}", aBoolean);
                             if(!aBoolean) {
+                                LOG.info("save in repo now");
                                 applicationEnvironmentRepository.save(new ApplicationEnvironment(
                                         applicationId, environmentAssociation.getEnvironmentId())).subscribe(applicationEnvironment ->
                                         LOG.info("associated application with envrionment: {}", applicationEnvironment));
                             }
-                        });
+                        }).subscribe(aBoolean -> LOG.info("aBoolean is {}", aBoolean));
             }
             else {
                 LOG.info("not associated environmentAssociation {}", environmentAssociation);
@@ -231,7 +232,7 @@ public class ApplicationService implements ApplicationBehavior {
                                 LOG.info("deleted associated application with environment {}", environmentAssociation.getEnvironmentName());
                             }
 
-                        });
+                        }).subscribe(aBoolean -> LOG.info("subscribe for deletion to cause it."));
             }
         }
 

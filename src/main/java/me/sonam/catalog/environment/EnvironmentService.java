@@ -45,6 +45,7 @@ public class EnvironmentService implements EnvironmentBehavior{
             environment.setIsNew(true);
             LOG.info("set new to true");
         }
+
         Mono<Environment> mono = environmentRepository.save(environment);
         mono.subscribe(environment1 -> LOG.info("saved environment"));
         return mono;

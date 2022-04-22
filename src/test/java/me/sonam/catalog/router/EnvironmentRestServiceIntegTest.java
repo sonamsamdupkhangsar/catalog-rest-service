@@ -96,11 +96,12 @@ public class EnvironmentRestServiceIntegTest {
         environment.setDeploymentLink("some deployment link");
         environment.setIsNew(true);
         environment.setClusterId(cluster.getId());
-        environmentRepository.save(environment).subscribe(env2 -> LOG.info("save env2"));
-
+        //environmentRepository.save(environment).subscribe(env2 -> LOG.info("save env2"));
 
         environment.setName("new dev environment");
 
+        LOG.info("call to update by rest");
+        environment.setIsNew(false);
         EntityExchangeResult<Environment> result = webTestClient.post().uri("/environments").bodyValue(environment)
                 .exchange().expectStatus().isOk().expectBody(Environment.class).returnResult();
 

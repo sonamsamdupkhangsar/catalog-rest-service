@@ -364,8 +364,8 @@ public class ApplicationRestServiceIntegTest {
         applicationMono.doOnNext(application1 -> {
             environmentRepository.save(devEnvrionment).subscribe(environment -> {
                 LOG.info("saved dev environment and associate with application");
-                ApplicationEnvironment applicationEnvironment = new ApplicationEnvironment(application1.getId(), environment.getId());
-                applicationEnvironmentRepository.save(applicationEnvironment).subscribe(applicationEnvironment1 -> LOG.info("saved applicationenvironment"));
+               // ApplicationEnvironment applicationEnvironment = new ApplicationEnvironment(application1.getId(), environment.getId());
+               // applicationEnvironmentRepository.save(applicationEnvironment).subscribe(applicationEnvironment1 -> LOG.info("saved applicationenvironment"));
                 environmentAssociations[0] = new EnvironmentAssociation(true, environment.getId(), environment.getName());
             });
             environmentRepository.save(stageEnvironment).subscribe(environment -> {
@@ -448,7 +448,7 @@ public class ApplicationRestServiceIntegTest {
         LOG.info("associateCluster");
         client.post();
         EntityExchangeResult<EnvironmentAssociation[]> associateClusterResult = client.post().uri("/applications/"+application2.getId()+
-                "/update/"+team4Cluster.getId()).body(monoList, EnvironmentAssociation.class)
+                "/cluster/update/"+team4Cluster.getId()).body(monoList, EnvironmentAssociation.class)
                 .exchange().expectStatus().isOk().expectBody(EnvironmentAssociation[].class).returnResult();
 
         assertThat(associateClusterResult.getResponseBody().length).isEqualTo(1);
