@@ -216,9 +216,8 @@ public class ApplicationService implements ApplicationBehavior {
                             LOG.info("exist?: {}", aBoolean);
                             if(!aBoolean) {
                                 applicationEnvironmentRepository.save(new ApplicationEnvironment(
-                                        applicationId, environmentAssociation.getEnvironmentId()));
-
-                                LOG.info("associated application with environment {}", environmentAssociation.getEnvironmentName());
+                                        applicationId, environmentAssociation.getEnvironmentId())).subscribe(applicationEnvironment ->
+                                        LOG.info("associated application with envrionment: {}", applicationEnvironment));
                             }
                         });
             }
