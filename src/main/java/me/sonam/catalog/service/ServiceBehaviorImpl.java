@@ -72,12 +72,15 @@ public class ServiceBehaviorImpl implements ServiceBehavior{
 
     @Override
     public Mono<Service> update(Service service) {
-        LOG.info("update service");
-        return serviceRepository.save(service).map(service1 ->
-        {
-            LOG.info("saved envrionment");
-            return service1;
-        });
+        LOG.info("update service: {}", service);
+        if (service.getId() == null) {
+            service.setId(UUID.randomUUID());
+            service.setIsNew(true);
+            LOG.info("set new to true");
+        }
+        Mono<Service> serviceMono = serviceRepository.save(service);
+        serviceMono.subscribe(service1 -> LOG.info("Saved service"));
+        return serviceMono;
     }
 
     @Override

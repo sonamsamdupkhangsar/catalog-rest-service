@@ -39,12 +39,15 @@ public class EnvironmentService implements EnvironmentBehavior{
 
     @Override
     public Mono<Environment> update(Environment environment) {
-        LOG.info("update environment");
-        return environmentRepository.save(environment).map(environment1 ->
-        {
-            LOG.info("saved envrionment");
-            return environment1;
-        });
+        LOG.info("update environment: {}", environment);
+        if (environment.getId() == null) {
+            environment.setId(UUID.randomUUID());
+            environment.setIsNew(true);
+            LOG.info("set new to true");
+        }
+        Mono<Environment> mono = environmentRepository.save(environment);
+        mono.subscribe(environment1 -> LOG.info("saved environment"));
+        return mono;
     }
 
     @Override
