@@ -56,7 +56,7 @@ public class ApplicationRouter {
                         .and(accept(MediaType.APPLICATION_JSON)), handler::getClusterWithAssociatedEnvironmentsForApplicationId)
                 .andRoute(POST("/applications/{applicationId}/environments/update")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::associateEnvironment)
-                .andRoute(POST("/applications/{applicationId}/update/{clusterId}")
+                .andRoute(POST("/applications/{applicationId}/cluster/update/{clusterId}")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::associateCluster)
                 .andRoute(GET("/applications/{applicationId}/connection/component")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::getConnectedComponents)
