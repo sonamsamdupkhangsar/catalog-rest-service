@@ -60,6 +60,8 @@ public class ApplicationRouter {
                         .and(accept(MediaType.APPLICATION_JSON)), handler::associateCluster)
                 .andRoute(GET("/applications/{applicationId}/connection/component")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::getConnectedComponents)
+                .andRoute(GET("/applications/{applicationId}/connection/app")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getConnectedApps)
                 .andRoute(POST("/applications/connection")
                         .and(accept(MediaType.APPLICATION_JSON)), handler::connect);
     }
