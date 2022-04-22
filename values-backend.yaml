@@ -44,9 +44,8 @@ istio:
 ingress:
   enabled: true
   ingressClass: nginx
-  #annotations:
-    #cert-manager.io/issuer: letsencrypt-nginx
-
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
   hosts:
     - host: catalog-rest-service.sonam.cloud
       paths:
