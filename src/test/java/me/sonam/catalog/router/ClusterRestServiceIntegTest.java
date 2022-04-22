@@ -86,17 +86,19 @@ public class ClusterRestServiceIntegTest {
 
     @Test
     public void update() {
-        Cluster cluster = new Cluster(UUID.randomUUID(), "My platform cluster");
-        clusterRepository.save(cluster).subscribe(cluster1 -> LOG.info("saved cluster"));
-
-        LOG.info("update cluster's name only");
-        cluster.setName("The platform cluster");
+        Cluster cluster = new Cluster(null, "My platform cluster");
 
         EntityExchangeResult<Cluster> result = webTestClient.post().uri("/clusters").bodyValue(cluster)
                 .exchange().expectStatus().isOk().expectBody(Cluster.class).returnResult();
 
         LOG.info("cluster: {}", result.getResponseBody());
-        assertThat(result.getResponseBody().getName()).isEqualTo("The platform cluster");
+        assertThat(result.getResponseBody().getName()).isEqualTo("My platform cluster");
+
+        LOG.info("get Page of clusters");
+        EntityExchangeResult<String> clusterResult = webTestClient.get().uri("/clusters")
+                .exchange().expectStatus().isOk().expectBody(String.class).returnResult();
+
+        LOG.info("found page of clusters: {}", clusterResult.getResponseBody());
 
     }
 

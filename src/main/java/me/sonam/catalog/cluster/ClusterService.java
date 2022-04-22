@@ -69,12 +69,13 @@ public class ClusterService implements ClusterBehavior{
 
         if (cluster.getId() == null) {
             cluster.setIsNew(true);
+            cluster.setId(UUID.randomUUID());
+
             LOG.info("set new to true when id is null");
         }
-        return clusterRepository.save(cluster).map(cluster1 -> {
-            LOG.info("saved cluster");
-            return cluster1;
-        });
+        Mono<Cluster> clusterMono =  clusterRepository.save(cluster);
+        clusterMono.subscribe(cluster1 -> LOG.info("saved cluster1"));
+        return clusterMono;
     }
 
     @Override
