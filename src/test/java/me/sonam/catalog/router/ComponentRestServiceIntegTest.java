@@ -13,6 +13,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableAutoConfiguration
@@ -31,9 +33,13 @@ public class ComponentRestServiceIntegTest {
     public void getPage() {
         for (int i = 0; i < 10; i++) {
             Component component = new Component("Mysql Component", null);
+            component.setId(UUID.randomUUID());
+            component.setIsNew(true);
             componentRepository.save(component).subscribe(cluster1 -> LOG.info("saved component"));
 
             Component child = new Component("database", component.getId());
+            child.setId(UUID.randomUUID());
+            child.setIsNew(true);
             componentRepository.save(child).subscribe(child1 -> LOG.info("saved child"));
         }
 
@@ -47,6 +53,8 @@ public class ComponentRestServiceIntegTest {
     @Test
     public void getComponent() {
         Component component = new Component("Mysql Component", null);
+        component.setId(UUID.randomUUID());
+        component.setIsNew(true);
         componentRepository.save(component).subscribe(cluster1 -> LOG.info("saved component"));
 
         LOG.info("get component");
@@ -61,9 +69,13 @@ public class ComponentRestServiceIntegTest {
     public void getParentComponents() {
         for (int i = 0; i < 10; i++) {
             Component component = new Component("Mysql Component", null);
+            component.setId(UUID.randomUUID());
+            component.setIsNew(true);
             componentRepository.save(component).subscribe(cluster1 -> LOG.info("saved component"));
 
             Component child = new Component("database", component.getId());
+            child.setId(UUID.randomUUID());
+            child.setIsNew(true);
             componentRepository.save(child).subscribe(child1 -> LOG.info("saved child"));
         }
 
@@ -79,29 +91,26 @@ public class ComponentRestServiceIntegTest {
     @Test
     public void update() {
         Component child = new Component("Mysql database", null);
-        componentRepository.save(child).subscribe(child1 -> LOG.info("saved component"));
-
-        Component parent = new Component("Mysql Component", null);
-        componentRepository.save(parent).subscribe(component1 -> LOG.info("saved parent component"));
-
-        child.setParentId(parent.getId());
 
         EntityExchangeResult<Component> result = webTestClient.post().uri("/components").bodyValue(child)
                 .exchange().expectStatus().isOk().expectBody(Component.class).returnResult();
 
         LOG.info("component: {}", result.getResponseBody());
-        assertThat(result.getResponseBody()).isEqualTo(child);
-        assertThat(result.getResponseBody().getParentId()).isEqualTo(parent.getId());
-
+        assertThat(result.getResponseBody().getId()).isNotNull();
     }
 
     @Test
     public void delete() {
         LOG.info("delete component");
         Component child = new Component("Mysql database", null);
+        child.setId(UUID.randomUUID());
+        child.setIsNew(true);
+
         componentRepository.save(child).subscribe(child1 -> LOG.info("saved component"));
 
         Component parent = new Component("Mysql Component", null);
+        parent.setId(UUID.randomUUID());
+        parent.setIsNew(true);
         componentRepository.save(parent).subscribe(component1 -> LOG.info("saved parent component"));
 
         child.setParentId(parent.getId());

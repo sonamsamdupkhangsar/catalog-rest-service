@@ -35,11 +35,12 @@ public class Component implements Persistable<UUID> {
     }
 
     public Component(String name, UUID parentId) {
-        this.isNew = true;
-        this.id = UUID.randomUUID();
         this.name = name;
         this.parentId = parentId;
         this.created = LocalDate.now();
+    }
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getId() {
@@ -71,6 +72,10 @@ public class Component implements Persistable<UUID> {
         this.parentId = parentId;
     }
 
+    public void setIsNew(boolean val) {
+        this.isNew = val;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -91,6 +96,7 @@ public class Component implements Persistable<UUID> {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", parentId=" + parentId +
+                ", isNew=" + isNew +
                 '}';
     }
 }

@@ -23,15 +23,24 @@ public class ComponentService implements ComponentBehavior{
 
     @Override
     public Mono<Component> update(Component component) {
-        LOG.info("update component");
-        return componentRepository.save(component).doOnNext(component1 -> {
-            componentRepository.findById(component1.getParentId()).map(component2 -> {
-                LOG.info("set parent component in component saved");
-                component1.setParent(component2);
-                return component1;
-            });
+        LOG.info("update component: {}", component);
+        if (component.getId() == null) {
+            component.setId(UUID.randomUUID());
+            component.setIsNew(true);
+        }
+
+        Mono<Component> componentMono =  componentRepository.save(component).doOnNext(component1 -> {
+            if (component1.getParentId() != null) {
+                componentRepository.findById(component1.getParentId()).map(component2 -> {
+                    LOG.info("set parent component in component saved");
+                    component1.setParent(component2);
+                    return component1;
+                });
+            }
             LOG.info("return component saved");
         });
+        componentMono.subscribe(component1 -> LOG.info("saved component"));
+        return componentMono;
     }
 
     @Override
