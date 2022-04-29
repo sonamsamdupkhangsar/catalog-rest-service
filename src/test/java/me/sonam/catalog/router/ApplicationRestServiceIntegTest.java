@@ -470,6 +470,8 @@ public class ApplicationRestServiceIntegTest {
         applicationRepository.save(application).subscribe(application1 -> {
            LOG.info("saved app");
            Component component = new Component("mykafka-queue", null);
+           component.setIsNew(true);
+           component.setId(UUID.randomUUID());
            componentRepository.save(component).subscribe(component1 -> {
                LOG.info("saved component");
                Connection connection = new Connection(Connection.ConnectionType.READ, Connection.CONNECTING.APP.name(),

@@ -14,6 +14,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @EnableAutoConfiguration
@@ -32,6 +34,8 @@ public class ClusterRepositoryIntegTest {
     @Test
     public void save() {
         Component component = new Component("production cluster", null);
+        component.setIsNew(true);
+        component.setId(UUID.randomUUID());
 
         LOG.info("save cluster");
         Mono<Component> componentMono = componentRepository.save(component);
