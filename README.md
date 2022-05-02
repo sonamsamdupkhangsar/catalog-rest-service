@@ -7,10 +7,10 @@ The rest service api is developed in reactive Java with Spring WebFlux.
 ```
 mvn spring-boot:run  -Dspring-boot.run.arguments="--POSTGRES_USERNAME=dummy \
                       --POSTGRES_PASSWORD=dummy \
-                      --POSTGRES_DBNAME=catlog \
+                      --POSTGRES_DBNAME=catalog \
                       --POSTGRES_SERVICE=localhost:5432
                       --TRUST_ORIGIN=http://localhost:8082
-                      --DB_SSLMODE=DISABLE"
+                      --DB_SSLMODE=DISABLE --server.port=8081"
 
 ```
 `DB_SSLMODE=REQUIRE` if connecting with ssl support.  For local development use `DISABLE`

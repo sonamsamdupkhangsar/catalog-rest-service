@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface ComponentRepository extends ReactiveCrudRepository<Component, UUID> {
     // get all top level components such as kafka, redis, postgresdb
     Flux<Component> findByParentIdNull();
-
+    Mono<Long> countById(UUID id);
     Mono<Boolean> existsByParentId(UUID id);
     Flux<Component> findAllBy(Pageable pageable);
 }

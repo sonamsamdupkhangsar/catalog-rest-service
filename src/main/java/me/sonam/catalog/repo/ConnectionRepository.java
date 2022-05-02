@@ -9,10 +9,13 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 public interface ConnectionRepository extends ReactiveCrudRepository<Connection, UUID> {
+
     Flux<Connection> findAllBy(Pageable pageable);
     Flux<Connection> findByAppIdSource(UUID appId);
+    Flux<Connection> findByAppIdSourceAndConnecting(UUID appId, String connecting);
+    Mono<Boolean> existsByAppIdSourceAndTargetIdAndConnecting(UUID appId, UUID targetId, String connecting);
     void deleteByAppIdSource(UUID appId);
-    void deleteByAppIdSourceAndConnecting(UUID appId, String appOrComp);
+    Mono<Long> deleteByAppIdSourceAndConnecting(UUID appId, String appOrComp);
     Mono<Boolean> existsByAppIdSourceAndTargetId(UUID appId, UUID targetId);
     Mono<Boolean> deleteByAppIdSourceAndTargetId(UUID appId, UUID targetId);
 }

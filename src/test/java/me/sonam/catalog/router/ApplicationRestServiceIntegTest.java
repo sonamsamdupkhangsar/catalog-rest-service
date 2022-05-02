@@ -457,6 +457,34 @@ public class ApplicationRestServiceIntegTest {
     }
 
     @Test
+    public void associateCluster() {
+        Application application2 = new Application();
+        application2.setName("Closed Circuit Application");
+        application2.setDeprecated(false);
+        application2.setDescription("this is a closed circuit tv app");
+        application2.setDocumentationUrl("http://www.circuitdummy.co.ohl.com");
+        application2.setGitRepo("http://github.com/org/project");
+        application2.setIsNew(true);
+        application2.setId(UUID.randomUUID());
+
+        applicationRepository.save(application2).subscribe(application -> LOG.info("application saved"));
+
+        Cluster cluster = new Cluster(UUID.randomUUID(), "Team4 Cluster");
+        cluster.setId(UUID.randomUUID());
+        cluster.setIsNew(true);
+
+        clusterRepository.save(cluster).subscribe(cluster1 ->
+            LOG.info("cluster saved in repo"));
+
+        LOG.info("associateCluster");
+
+        EntityExchangeResult<EnvironmentAssociation[]> associateClusterResult = client.post().uri("/applications/"+application2.getId()+
+                "/cluster/update/"+cluster.getId())
+                .exchange().expectStatus().isOk().expectBody(EnvironmentAssociation[].class).returnResult();
+
+    }
+
+    @Test
     public void connect() {
         Application application = new Application();
         application.setName("Closed Circuit Application");
@@ -467,35 +495,49 @@ public class ApplicationRestServiceIntegTest {
         application.setIsNew(true);
         application.setId(UUID.randomUUID());
 
-        applicationRepository.save(application).subscribe(application1 -> {
-           LOG.info("saved app");
-           Component component = new Component("mykafka-queue", null);
-           component.setIsNew(true);
-           component.setId(UUID.randomUUID());
-           componentRepository.save(component).subscribe(component1 -> {
-               LOG.info("saved component");
-               Connection connection = new Connection(Connection.ConnectionType.READ, Connection.CONNECTING.APP.name(),
-                       application1.getId(), component1.getId() );
-               connectionRepository.save(connection).subscribe(connection1 -> LOG.info("saved connection from app to component"));
-            }
-           );
+        Mono<Application> applicationMono = applicationRepository.save(application);
+        Component component = new Component("mykafka-queue", null);
+        component.setIsNew(true);
+        component.setId(UUID.randomUUID());
+        Mono<Component> componentMono = componentRepository.save(component);
 
+        Component dbComponent = new Component("myCatalogDatabase", null);
+        dbComponent.setIsNew(true);
+        dbComponent.setId(UUID.randomUUID());
+        Mono<Component> dbComponentMono = componentRepository.save(dbComponent);
+
+        applicationMono.zipWith(componentMono).zipWith(dbComponentMono).subscribe(objects -> {
+           LOG.info("saved application, component and dbComponent");
         });
 
-        LOG.info("get connected components");
+        LOG.info("connect app {} with component {}", application.getId(), component.getId());
+
         ConnectionForm connectionForm = new ConnectionForm();
         connectionForm.setAppId(application.getId());
-        connectionForm.setConnecting(Connection.CONNECTING.APP.name());
+        connectionForm.setConnecting(Connection.CONNECTING.COMPONENT.name());
+        LOG.info("set connection from app to queue and db components");
+        connectionForm.setTargetIdList(Arrays.asList(component.getId(), dbComponent.getId()));
 
         client.post().uri("/applications/connection").bodyValue(connectionForm)
                 .exchange().expectStatus().isOk().expectBody(String.class).isEqualTo("connection updated");
 
+        LOG.info("checking if connection is found");
+        connectionRepository.findByAppIdSourceAndConnecting(application.getId(), Connection.CONNECTING.COMPONENT.name()).subscribe(
+                connection -> LOG.info("after saving found connection: {}", connection));
+
+
+        connectionRepository.findAll().subscribe(connection -> LOG.info("found connection in all: {}", connection));
+
         EntityExchangeResult<Component[]> result = client.get().uri("/applications/"+application.getId()+"/connection/component")
                 .exchange().expectStatus().isOk().expectBody(Component[].class).returnResult();
 
-        LOG.info("go connectedapps: {}", result.getResponseBody());
-
-
+        LOG.info("got app connected components: {}", result.getResponseBody());
+        Component[] components = result.getResponseBody();
+        LOG.info("components found: {}", components.length);
+        for(Component component1: components) {
+            LOG.info("component: {}", component1);
+        }
+        assertThat(components.length).isEqualTo(2);
     }
 
 }

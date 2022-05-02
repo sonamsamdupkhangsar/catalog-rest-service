@@ -8,16 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component
+@Service
 public class ApplicationHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationHandler.class);
 
@@ -137,7 +137,7 @@ public class ApplicationHandler {
         UUID applicationId = UUID.fromString(serverRequest.pathVariable("applicationId"));
 
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).
-                body(applicationBehavior.getConnectedComponents(applicationId), Component[].class)
+                body(applicationBehavior.getConnectedComponents(applicationId), Component.class)
                 .onErrorResume(e -> ServerResponse.badRequest().body(BodyInserters
                         .fromValue(e.getMessage())));
     }

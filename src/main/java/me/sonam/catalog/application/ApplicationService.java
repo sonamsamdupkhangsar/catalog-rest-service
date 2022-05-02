@@ -242,44 +242,57 @@ public class ApplicationService implements ApplicationBehavior {
 
     @Override
     public Flux<EnvironmentAssociation> associateCluster(UUID applicationId, UUID clusterId) {
-        applicationRepository.findById(applicationId).doOnNext(application -> {
-            clusterRepository.findById(clusterId).doOnNext(cluster -> {
-                LOG.info("application.setPlatformId clusterId");
-                application.setPlatformId(clusterId);
-                applicationRepository.save(application).subscribe(application1 -> LOG.info("updated app cluster-id"));
-            });
-            LOG.info("delete app from applicationEnvironment");
-            applicationEnvironmentRepository.deleteByApplicationId(applicationId);
-        });
-        return getEnvironmentAssociationForApplicationId(applicationId);
+        LOG.info("associate cluster");
+        Mono<Cluster> clusterMono = clusterRepository.findById(clusterId);
+
+       return applicationRepository.findById(applicationId).zipWith(clusterMono).doOnNext(objects -> {
+           LOG.info("delete app from applicationEnvironment");
+           applicationEnvironmentRepository.deleteByApplicationId(objects.getT1().getId());
+           Application application = objects.getT1();
+           application.setPlatformId(objects.getT2().getId());
+           applicationRepository.save(application).subscribe(application1 -> LOG.info("updated app cluster-id"));
+
+        }).thenMany(
+       getEnvironmentAssociationForApplicationId(applicationId));
     }
 
     @Override
     public Flux<Component> getConnectedComponents(UUID applicationId) {
-        LOG.info("getConnectedComponents");
-        return connectionRepository.findByAppIdSource(applicationId).flatMap(connection -> {
-            List<Component> list = new ArrayList<>();
-            if(connection.getConnecting() != null && Connection.CONNECTING.COMPONENT.name().equals(connection.getConnecting())) {
-                componentRepository.findById(connection.getId()).doOnNext(component -> list.add(component));
-            }
-            LOG.info("return flux list.size: {}, list: {}", list.size(), list);
-            return Flux.fromIterable(list);
-        });
+        LOG.info("getConnectedComponents for appId: {}", applicationId);
+
+        return connectionRepository.findByAppIdSourceAndConnecting(applicationId, Connection.CONNECTING.COMPONENT.name())
+                .flatMap(connection -> componentRepository.findById(connection.getTargetId()));
     }
 
     @Override
     public Mono<String> connect(ConnectionForm connectionForm) {
-        LOG.info("connect with form");
-        applicationRepository.findById(connectionForm.getAppId()).doOnNext(application -> {
-            connectionRepository.deleteByAppIdSourceAndConnecting(connectionForm.getAppId(), connectionForm.getConnecting());
-            LOG.info("delete connection");
+        LOG.info("connectapp with component: {}", connectionForm);
+        Mono<Long> deleteMono = connectionRepository.deleteByAppIdSourceAndConnecting(
+                connectionForm.getAppId(), connectionForm.getConnecting());
+
+        Mono<Application> applicationMono = applicationRepository.findById(connectionForm.getAppId());
+        return deleteMono.map(aLong -> {
+            LOG.info("deleted rows: {}", aLong);
+            return applicationRepository.findById(connectionForm.getAppId());
+        }).doOnNext(application -> {
+
+            LOG.info("set connection now");
             for(UUID targetId: connectionForm.getTargetIdList()) {
-                Connection connection = new Connection(Connection.ConnectionType.READE_WRITE, connectionForm.getConnecting(), connectionForm.getAppId(), targetId);
-                connectionRepository.save(connection).subscribe(connection1 -> LOG.info("added connection source: {}",connection));
+                Connection connection = new Connection(Connection.ConnectionType.READE_WRITE, connectionForm.getConnecting(),
+                        connectionForm.getAppId(), targetId);
+                connectionRepository.existsByAppIdSourceAndTargetIdAndConnecting(connection.getAppIdSource(),
+                        connection.getTargetId(), connection.getConnecting()).doOnNext(aBoolean ->
+                    {
+                        if (aBoolean == false) {
+                            connectionRepository.save(connection).subscribe(connection1 -> LOG.info("added connection source: {}", connection));
+                        }
+                        else {
+                            LOG.info("connection already exists with appId, targetId and connecting value");
+                        }
+                }).subscribe();
             }
 
-        });
-        return Mono.just("connection updated");
+        }).thenReturn("connection updated");
     }
 
     @Override

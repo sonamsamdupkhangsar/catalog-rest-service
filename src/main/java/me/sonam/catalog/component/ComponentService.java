@@ -69,7 +69,23 @@ public class ComponentService implements ComponentBehavior{
     @Override
     public Mono<Component> getComponent(UUID componentId) {
         LOG.info("getComponent with id: {}", componentId);
+        Mono<Component> componentMono = componentRepository.findById(componentId);
 
+       return componentMono.map(component -> component.getParentId()).map(parentId -> {
+           if (parentId != null) {
+               LOG.info("parientid is null");
+             return null;
+           }
+           else {
+               LOG.info("get by parentId");
+               return componentRepository.findById(parentId);
+           }
+        }).map(componentMono1 -> componentRepository.findById(componentId).zipWith(componentMono).doOnNext(objects ->
+                objects.getT1().setParent(objects.getT2())
+   /*return componentRepository.findById(componentId).zipWith(componentMono).doOnNext(objects ->
+           objects.getT1().setParent(objects.getT2())*/
+       )).then(componentMono);
+/*
         return componentRepository.findById(componentId).doOnNext(component1 -> {
             if (component1.getParentId() != null) {
                 componentRepository.findById(component1.getParentId()).map(component2 -> {
@@ -79,7 +95,7 @@ public class ComponentService implements ComponentBehavior{
                 });
             }
             LOG.info("return component saved");
-        });
+        });*/
     }
 
     @Override
