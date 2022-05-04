@@ -38,6 +38,7 @@ public class ComponentHandler {
         LOG.info("get component");
         UUID componentId = UUID.fromString(serverRequest.pathVariable("componentId"));
         LOG.info("componentId: {}", componentId);
+
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
                 .body(componentBehavior.getComponent(componentId), Component.class)
                 .onErrorResume(e -> ServerResponse.badRequest().body(BodyInserters

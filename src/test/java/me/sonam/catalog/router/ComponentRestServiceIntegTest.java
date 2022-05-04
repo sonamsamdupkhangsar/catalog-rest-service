@@ -50,7 +50,7 @@ public class ComponentRestServiceIntegTest {
         LOG.info("found page of clusters: {}", result.getResponseBody());
     }
 
-    @Test
+   // @Test
     public void getComponent() {
         Component component = new Component("Mysql Component", null);
         component.setId(UUID.randomUUID());
