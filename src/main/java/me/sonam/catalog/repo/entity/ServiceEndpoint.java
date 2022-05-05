@@ -24,12 +24,6 @@ public class ServiceEndpoint implements Persistable<UUID> {
 
     private String restMethod;
 
-    private Boolean healthEndpoint = false;
-
-    private Boolean accessTokenRequired;
-
-    private Boolean pingIt;
-
     @Transient
     private boolean isNew;
 
@@ -76,30 +70,6 @@ public class ServiceEndpoint implements Persistable<UUID> {
         this.restMethod = restMethod;
     }
 
-    public Boolean getHealthEndpoint() {
-        return healthEndpoint;
-    }
-
-    public void setHealthEndpoint(Boolean healthEndpoint) {
-        this.healthEndpoint = healthEndpoint;
-    }
-
-    public Boolean getAccessTokenRequired() {
-        return accessTokenRequired;
-    }
-
-    public void setAccessTokenRequired(Boolean accessTokenRequired) {
-        this.accessTokenRequired = accessTokenRequired;
-    }
-
-    public Boolean getPingIt() {
-        return pingIt;
-    }
-
-    public void setPingIt(Boolean pingIt) {
-        this.pingIt = pingIt;
-    }
-
     public String getName() {
         return name;
     }
@@ -127,9 +97,6 @@ public class ServiceEndpoint implements Persistable<UUID> {
                 ", endpoint='" + endpoint + '\'' +
                 ", description='" + description + '\'' +
                 ", restMethod='" + restMethod + '\'' +
-                ", healthEndpoint=" + healthEndpoint +
-                ", accessTokenRequired=" + accessTokenRequired +
-                ", pingIt=" + pingIt +
                 ", isNew=" + isNew +
                 '}';
     }

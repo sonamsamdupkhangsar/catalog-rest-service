@@ -46,7 +46,7 @@ public class SpringBootApplication {
         public void addCorsMappings(CorsRegistry corsRegistry) {
             corsRegistry.addMapping("/**")
                     .allowedOrigins(trustOrigin)
-                    .allowedMethods("GET", "POST", "PUT")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE")
                     .maxAge(3600);
         }
     }
