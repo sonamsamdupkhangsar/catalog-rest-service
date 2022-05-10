@@ -44,6 +44,11 @@ public class Service implements Persistable<UUID> {
     @Transient
     private boolean isNew;
 
+    //this property is only here to support the front-end VueJs so they don't have to dynamically create
+    //this field
+    @Transient
+    private ServiceEndpoint[] serviceEndpoints;
+
     public Service() {
     }
 
@@ -157,6 +162,14 @@ public class Service implements Persistable<UUID> {
 
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    public ServiceEndpoint[] getServiceEndpoints() {
+        return serviceEndpoints;
+    }
+
+    public void setServiceEndpoints(ServiceEndpoint[] serviceEndpoints) {
+        this.serviceEndpoints = serviceEndpoints;
     }
 
     @Override

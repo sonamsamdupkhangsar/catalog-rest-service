@@ -21,5 +21,5 @@ deployment_link varchar, cluster_id UUID);
 create table if not exists Service( id UUID primary key, name varchar, application_id UUID, description varchar, endpoint varchar,
 health_endpoint boolean, access_token_required boolean, ping_it boolean, rest_method varchar);
 create table if not exists Service_Endpoint( id UUID primary key, service_id UUID, name varchar, description varchar,
- rest_method varchar, endpoint varchar);
+ rest_method varchar, endpoint varchar,  request_body varchar, response_body varchar);
 

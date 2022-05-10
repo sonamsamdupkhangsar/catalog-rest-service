@@ -32,7 +32,7 @@ Build docker image using included Dockerfile.
 ## Deploy Docker image locally
 
 `docker run -e POSTGRES_USERNAME=dummy \
- -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=catlog \
+ -e POSTGRES_PASSWORD=dummy -e POSTGRES_DBNAME=catalog \
   -e POSTGRES_SERVICE=localhost:5432 \
  --publish 8080:8080 imageregistry/project-rest-service:1.0`
 

@@ -36,39 +36,28 @@ public class ServiceBehaviorImpl implements ServiceBehavior{
     @Override
     public Mono<Page<Service>> getPage(Pageable pageable) {
         LOG.info("get page of services");
-        return serviceRepository.findAllBy(pageable).collectList()
+        return serviceRepository.findAllBy(pageable).filter(service -> service.getApplicationId() != null)
+                .flatMap(service -> {
+                    LOG.info("service.appId: {}", service.getApplicationId());
+                    return applicationRepository.findById(service.getApplicationId()).
+                            doOnNext(application -> service.setApplication(application)).thenReturn(service);
+                })
+                .filter(service -> service.getApplication().getPlatformId() != null)
+                .doOnNext(service -> {
+                    LOG.info("service.getApplication().getPlatformId(): {}", service.getApplication().getPlatformId());
+                      clusterRepository.findById(service.getApplication().getPlatformId())
+
+                            .doOnNext(cluster -> {service.getApplication().setPlatformName(cluster.getName());
+                            LOG.info("set clustername: {}", service.getApplication().getPlatformName());
+                            }).subscribe();
+                    // TO DO: fix this so there is no subscribe method on it.
+                }).doOnNext(service -> LOG.info("service.getApplication().getPlatformName(): {}",
+                        service.getApplication().getPlatformName()))
+                .collectList()
                 .zipWith(this.serviceRepository.count())
-                .map(t -> {
-                    List<Service> list = t.getT1();
-
-                    for(Service s: list) {
-                        LOG.info("service.applicationId: {}", s.getApplicationId());
-                        if (s.getApplicationId() != null) {
-                            applicationRepository.findById(s.getApplicationId()).doOnNext(application -> {
-                                s.setApplication(application);
-                                LOG.info("set service.application");
-
-                                if (application.getPlatformId() != null) {
-                                    clusterRepository.findById(application.getPlatformId()).map(cluster -> {
-                                        LOG.info("set service.platformName");
-                                        s.setPlatformName(cluster.getName());
-
-                                        applicationEnvironmentRepository.findByApplicationId(application.getId())
-                                                .doOnNext(applicationEnvironment -> {
-
-                                                    environmentRepository.findById(applicationEnvironment.getEnvironmentId())
-                                                            .map(environment -> s.getEnvironmentList().add(environment));
-                                                });
-                                        return cluster;
-                                    });
-                                }
-
-                            });
-                        }
-                    }
-                    return new PageImpl<>(t.getT1(), pageable, t.getT2());
-                });
+                .map(t -> new PageImpl<>(t.getT1(), pageable, t.getT2()));
     }
+
 
     @Override
     public Mono<Service> update(Service service) {

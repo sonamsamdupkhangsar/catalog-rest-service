@@ -1,13 +1,7 @@
 package me.sonam.catalog.router;
 
-import me.sonam.catalog.repo.ApplicationEnvironmentRepository;
-import me.sonam.catalog.repo.ApplicationRepository;
-import me.sonam.catalog.repo.EnvironmentRepository;
-import me.sonam.catalog.repo.ServiceRepository;
-import me.sonam.catalog.repo.entity.Application;
-import me.sonam.catalog.repo.entity.ApplicationEnvironment;
-import me.sonam.catalog.repo.entity.Environment;
-import me.sonam.catalog.repo.entity.Service;
+import me.sonam.catalog.repo.*;
+import me.sonam.catalog.repo.entity.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -44,6 +38,9 @@ public class ServiceRestServiceIntegTest {
     @Autowired
     private ApplicationEnvironmentRepository applicationEnvironmentRepository;
 
+    @Autowired
+    private ClusterRepository clusterRepository;
+
     @Test
     public void getPage() {
         Application application = new Application();
@@ -55,6 +52,10 @@ public class ServiceRestServiceIntegTest {
         application.setIsNew(true);
         application.setId(UUID.randomUUID());
 
+        Cluster cluster = new Cluster(UUID.randomUUID(), "My platform cluster");
+        clusterRepository.save(cluster).subscribe(cluster1 -> LOG.info("saved cluster"));
+
+        application.setPlatformId(cluster.getId());
         applicationRepository.save(application).subscribe(application1 -> LOG.info("saved app"));
 
 
@@ -76,6 +77,8 @@ public class ServiceRestServiceIntegTest {
         service.setPingIt(true);
         service.setRestMethod("mymethod");
         service.setIsNew(true);
+
+
 
         serviceRepository.save(service).subscribe(service1 ->LOG.info("saved service with application-id: {}", service1));
 

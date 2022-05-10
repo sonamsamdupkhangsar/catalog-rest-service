@@ -25,4 +25,5 @@ public class ConnectionService implements ConnectionBehavior {
                 .zipWith(this.connectionRepository.count())
                 .map(t -> new PageImpl<>(t.getT1(), pageable, t.getT2()));
     }
+
 }

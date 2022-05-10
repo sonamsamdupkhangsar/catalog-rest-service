@@ -24,6 +24,10 @@ public class ServiceEndpoint implements Persistable<UUID> {
 
     private String restMethod;
 
+    private String requestBody;
+
+    private String responseBody;
+
     @Transient
     private boolean isNew;
 
@@ -76,6 +80,22 @@ public class ServiceEndpoint implements Persistable<UUID> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRequestBody() {
+        return requestBody;
+    }
+
+    public void setRequestBody(String requestBody) {
+        this.requestBody = requestBody;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(String responseBody) {
+        this.responseBody = responseBody;
     }
 
     @Override
