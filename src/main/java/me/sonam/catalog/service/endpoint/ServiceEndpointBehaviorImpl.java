@@ -51,4 +51,14 @@ public class ServiceEndpointBehaviorImpl implements ServiceEndpointBehavior {
         });
     }
 
+    @Override
+    public Mono<String> deleteByServiceId(UUID serviceId) {
+        LOG.info("delete serviceEndpoints by serviceId");
+
+        return serviceEndpointRepository.deleteByServiceId(serviceId).flatMap(unused -> {
+            LOG.info("deleted serviceEndpoints by serviceId");
+            return Mono.just("deleted serviceEndpoints by serviceId");
+        });
+    }
+
 }

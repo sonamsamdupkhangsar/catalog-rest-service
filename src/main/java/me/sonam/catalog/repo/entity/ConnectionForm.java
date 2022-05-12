@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class ConnectionForm {
+    private UUID serviceEndpointId;
+    private UUID serviceId;
     private UUID appId;
     private String connecting;
 
@@ -14,8 +16,24 @@ public class ConnectionForm {
     public ConnectionForm() {
     }
 
+    public UUID getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(UUID serviceId) {
+        this.serviceId = serviceId;
+    }
+
     public UUID getAppId() {
         return appId;
+    }
+
+    public UUID getServiceEndpointId() {
+        return serviceEndpointId;
+    }
+
+    public void setServiceEndpointId(UUID serviceEndpointId) {
+        this.serviceEndpointId = serviceEndpointId;
     }
 
     public List<UUID> getTargetIdList() {
@@ -41,7 +59,9 @@ public class ConnectionForm {
     @Override
     public String toString() {
         return "ConnectionForm{" +
+                ", serviceEndpointId=" +serviceEndpointId +
                 "appId=" + appId +
+                ", serviceId=" + serviceId +
                 ", targetIdList=" + targetIdList +
                 '}';
     }

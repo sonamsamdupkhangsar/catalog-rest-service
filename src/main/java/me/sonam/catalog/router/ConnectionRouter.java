@@ -39,6 +39,16 @@ public class ConnectionRouter {
     public RouterFunction<ServerResponse> connectionRoute(ConnectionHandler handler) {
         LOG.info("building application router function");
         return RouterFunctions.route(GET("/connections")
-                        .and(accept(MediaType.APPLICATION_JSON)), handler::getPage);
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getPage)
+                .andRoute(GET("/connections/serviceEndpointId/{serviceEndpointId}/component")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getConnectedComponents)
+                .andRoute(GET("/connections/serviceEndpointId/{serviceEndpointId}/app")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::getConnectedApps)
+                .andRoute(POST("/connections")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::connect)
+                .andRoute(DELETE("/connections/deleteby/serviceEndpointId/{serviceEndpointId}")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::deleteByServiceEndpoint)
+                .andRoute(DELETE("/connections/deleteby/serviceId/{serviceId}")
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::deleteByServiceId);
     }
 }

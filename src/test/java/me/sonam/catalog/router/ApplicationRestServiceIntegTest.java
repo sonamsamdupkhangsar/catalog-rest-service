@@ -484,60 +484,6 @@ public class ApplicationRestServiceIntegTest {
 
     }
 
-    @Test
-    public void connect() {
-        Application application = new Application();
-        application.setName("Closed Circuit Application");
-        application.setDeprecated(false);
-        application.setDescription("this is a closed circuit tv app");
-        application.setDocumentationUrl("http://www.circuitdummy.co.ohl.com");
-        application.setGitRepo("http://github.com/org/project");
-        application.setIsNew(true);
-        application.setId(UUID.randomUUID());
 
-        Mono<Application> applicationMono = applicationRepository.save(application);
-        Component component = new Component("mykafka-queue", null);
-        component.setIsNew(true);
-        component.setId(UUID.randomUUID());
-        Mono<Component> componentMono = componentRepository.save(component);
-
-        Component dbComponent = new Component("myCatalogDatabase", null);
-        dbComponent.setIsNew(true);
-        dbComponent.setId(UUID.randomUUID());
-        Mono<Component> dbComponentMono = componentRepository.save(dbComponent);
-
-        applicationMono.zipWith(componentMono).zipWith(dbComponentMono).subscribe(objects -> {
-           LOG.info("saved application, component and dbComponent");
-        });
-
-        LOG.info("connect app {} with component {}", application.getId(), component.getId());
-
-        ConnectionForm connectionForm = new ConnectionForm();
-        connectionForm.setAppId(application.getId());
-        connectionForm.setConnecting(Connection.CONNECTING.COMPONENT.name());
-        LOG.info("set connection from app to queue and db components");
-        connectionForm.setTargetIdList(Arrays.asList(component.getId(), dbComponent.getId()));
-
-        client.post().uri("/applications/connection").bodyValue(connectionForm)
-                .exchange().expectStatus().isOk().expectBody(String.class).isEqualTo("connection updated");
-
-        LOG.info("checking if connection is found");
-        connectionRepository.findByAppIdSourceAndConnecting(application.getId(), Connection.CONNECTING.COMPONENT.name()).subscribe(
-                connection -> LOG.info("after saving found connection: {}", connection));
-
-
-        connectionRepository.findAll().subscribe(connection -> LOG.info("found connection in all: {}", connection));
-
-        EntityExchangeResult<Component[]> result = client.get().uri("/applications/"+application.getId()+"/connection/component")
-                .exchange().expectStatus().isOk().expectBody(Component[].class).returnResult();
-
-        LOG.info("got app connected components: {}", result.getResponseBody());
-        Component[] components = result.getResponseBody();
-        LOG.info("components found: {}", components.length);
-        for(Component component1: components) {
-            LOG.info("component: {}", component1);
-        }
-        assertThat(components.length).isEqualTo(2);
-    }
 
 }

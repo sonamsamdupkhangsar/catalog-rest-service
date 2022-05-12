@@ -21,6 +21,6 @@ public interface ApplicationBehavior {
     Flux<EnvironmentAssociation> associateEnvironment(UUID applicationId, List<EnvironmentAssociation> environmentAssociations);
     Flux<EnvironmentAssociation> associateCluster(UUID applicationId, UUID clusterId);
     Flux<Component> getConnectedComponents(UUID applicationId);
-    Mono<String> connect(ConnectionForm connectionForm);
+
     Flux<Application> getConnectedApps(UUID applicationId);
 }

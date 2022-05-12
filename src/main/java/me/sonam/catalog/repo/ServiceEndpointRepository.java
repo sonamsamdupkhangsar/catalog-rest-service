@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface ServiceEndpointRepository extends ReactiveCrudRepository<ServiceEndpoint, UUID> {
     Flux<ServiceEndpoint> findByServiceId(UUID sericeId);
     Flux<ServiceEndpoint> findAllBy(Pageable pageable);
+    Mono<Long> deleteByServiceId(UUID serviceId);
 }

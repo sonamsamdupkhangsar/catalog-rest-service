@@ -43,6 +43,7 @@ public class ApplicationService implements ApplicationBehavior {
 
     @Override
     public Mono<Page<Application>> getApplications(Pageable pageable) {
+        LOG.info("get apps by pageable {}", pageable);
         return applicationRepository.findAllBy(pageable).collectList()
                 .zipWith(this.applicationRepository.count())
                 .map(t -> new PageImpl<>(t.getT1(), pageable, t.getT2()));
@@ -260,44 +261,15 @@ public class ApplicationService implements ApplicationBehavior {
     public Flux<Component> getConnectedComponents(UUID applicationId) {
         LOG.info("getConnectedComponents for appId: {}", applicationId);
 
-        return connectionRepository.findByAppIdSourceAndConnecting(applicationId, Connection.CONNECTING.COMPONENT.name())
+        return connectionRepository.findByAppIdAndConnecting(applicationId, Connection.CONNECTING.COMPONENT.name())
                 .flatMap(connection -> componentRepository.findById(connection.getTargetId()));
     }
 
-    @Override
-    public Mono<String> connect(ConnectionForm connectionForm) {
-        LOG.info("connectapp with component: {}", connectionForm);
-        Mono<Long> deleteMono = connectionRepository.deleteByAppIdSourceAndConnecting(
-                connectionForm.getAppId(), connectionForm.getConnecting());
 
-        Mono<Application> applicationMono = applicationRepository.findById(connectionForm.getAppId());
-        return deleteMono.map(aLong -> {
-            LOG.info("deleted rows: {}", aLong);
-            return applicationRepository.findById(connectionForm.getAppId());
-        }).doOnNext(application -> {
-
-            LOG.info("set connection now");
-            for(UUID targetId: connectionForm.getTargetIdList()) {
-                Connection connection = new Connection(Connection.ConnectionType.READE_WRITE, connectionForm.getConnecting(),
-                        connectionForm.getAppId(), targetId);
-                connectionRepository.existsByAppIdSourceAndTargetIdAndConnecting(connection.getAppIdSource(),
-                        connection.getTargetId(), connection.getConnecting()).doOnNext(aBoolean ->
-                    {
-                        if (aBoolean == false) {
-                            connectionRepository.save(connection).subscribe(connection1 -> LOG.info("added connection source: {}", connection));
-                        }
-                        else {
-                            LOG.info("connection already exists with appId, targetId and connecting value");
-                        }
-                }).subscribe();
-            }
-
-        }).thenReturn("connection updated");
-    }
 
     @Override
     public Flux<Application> getConnectedApps(UUID applicationId) {
-        return connectionRepository.findByAppIdSource(applicationId).flatMap(connection ->
+        return connectionRepository.findByAppId(applicationId).flatMap(connection ->
             applicationRepository.findById(connection.getTargetId()));
     }
 }

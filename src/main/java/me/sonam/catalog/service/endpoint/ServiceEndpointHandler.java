@@ -54,4 +54,14 @@ public class ServiceEndpointHandler {
                         .fromValue(e.getMessage())));
     }
 
+    public Mono<ServerResponse> deleteByServiceId(ServerRequest serverRequest) {
+        LOG.info("delete serviceEndpoints by serviceId");
+        UUID serviceId = UUID.fromString(serverRequest.pathVariable("serviceId"));
+
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                .body(serviceEndpointBehavior.deleteByServiceId(serviceId), String.class)
+                .onErrorResume(e -> ServerResponse.badRequest().body(BodyInserters
+                        .fromValue(e.getMessage())));
+    }
+
 }

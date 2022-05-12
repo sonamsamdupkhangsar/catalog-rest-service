@@ -28,6 +28,8 @@ public class ServiceEndpoint implements Persistable<UUID> {
 
     private String responseBody;
 
+    private String apiMethod;
+
     @Transient
     private boolean isNew;
 
@@ -98,6 +100,14 @@ public class ServiceEndpoint implements Persistable<UUID> {
         this.responseBody = responseBody;
     }
 
+    public String getApiMethod() {
+        return apiMethod;
+    }
+
+    public void setApiMethod(String apiMethod) {
+        this.apiMethod = apiMethod;
+    }
+
     @Override
     public UUID getId() {
         return this.id;
@@ -117,6 +127,7 @@ public class ServiceEndpoint implements Persistable<UUID> {
                 ", endpoint='" + endpoint + '\'' +
                 ", description='" + description + '\'' +
                 ", restMethod='" + restMethod + '\'' +
+                ", apiMethod='" + apiMethod +'\'' +
                 ", isNew=" + isNew +
                 '}';
     }

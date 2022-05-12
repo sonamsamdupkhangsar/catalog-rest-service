@@ -14,12 +14,13 @@ create table if not exists Application_Status (id uuid primary key, application_
 
 create table if not exists Cluster (id UUID primary key, name varchar);
 create table if not exists Component(id UUID primary key, name varchar, parent_id UUID, created timestamp);
-create table if not exists Connection(id UUID primary key, connection varchar, app_id_source UUID, target_id UUID, connecting varchar);
+create table if not exists Connection(id UUID primary key, connection varchar, service_endpoint_id UUID, target_id UUID,
+    app_id UUID, service_id UUID, connecting varchar);
 create table if not exists Dependency(id UUID primary key, provider_id UUID, consumer_id UUID);
 create table if not exists Environment(id UUID primary key, sort_order int, environment_type varchar, name varchar, domain varchar,
 deployment_link varchar, cluster_id UUID);
 create table if not exists Service( id UUID primary key, name varchar, application_id UUID, description varchar, endpoint varchar,
-health_endpoint boolean, access_token_required boolean, ping_it boolean, rest_method varchar);
+health_endpoint boolean, access_token_required boolean, ping_it boolean, rest_method varchar, api_controller varchar);
 create table if not exists Service_Endpoint( id UUID primary key, service_id UUID, name varchar, description varchar,
- rest_method varchar, endpoint varchar,  request_body varchar, response_body varchar);
+ rest_method varchar, endpoint varchar,  request_body varchar, response_body varchar, api_method varchar);
 

@@ -32,6 +32,8 @@ public class Service implements Persistable<UUID> {
 
     private String restMethod;
 
+    private String apiController;
+
     @Transient
     private Application application;
 
@@ -170,6 +172,14 @@ public class Service implements Persistable<UUID> {
 
     public void setServiceEndpoints(ServiceEndpoint[] serviceEndpoints) {
         this.serviceEndpoints = serviceEndpoints;
+    }
+
+    public String getApiController() {
+        return apiController;
+    }
+
+    public void setApiController(String apiController) {
+        this.apiController = apiController;
     }
 
     @Override

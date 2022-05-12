@@ -16,5 +16,6 @@ public interface ServiceEndpointBehavior {
     // get serviceEndpoints by serviceId
     Flux<ServiceEndpoint> getServiceEndpoints(UUID serviceId);
     Mono<ServiceEndpoint> update(ServiceEndpoint serviceEndpoint);
-    Mono<String> delete(UUID serviceId);
+    Mono<String> delete(UUID serviceEndpointId);
+    Mono<String> deleteByServiceId(UUID serviceId);
 }

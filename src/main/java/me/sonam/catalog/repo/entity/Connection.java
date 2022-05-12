@@ -20,7 +20,11 @@ public class Connection implements Persistable<UUID> {
 
     private String connection;
 
-    private UUID appIdSource;
+    private UUID serviceEndpointId;
+
+    private UUID serviceId;
+
+    private UUID appId;
 
     private UUID targetId;
 
@@ -32,13 +36,15 @@ public class Connection implements Persistable<UUID> {
     public Connection() {
     }
 
-    public Connection(ConnectionType connectionType, String connecting, UUID appIdSource, UUID targetId) {
+    public Connection(ConnectionType connectionType, String connecting, UUID serviceEndpointId, UUID targetId, UUID serviceId, UUID appId) {
         this.isNew = true;
         this.id = UUID.randomUUID();
         this.connection = connectionType.name();
-        this.appIdSource = appIdSource;
+        this.serviceEndpointId = serviceEndpointId;
         this.targetId = targetId;
         this.connecting = connecting;
+        this.serviceId = serviceId;
+        this.appId = appId;
     }
 
     public UUID getId() {
@@ -54,8 +60,8 @@ public class Connection implements Persistable<UUID> {
         return connection;
     }
 
-    public UUID getAppIdSource() {
-        return appIdSource;
+    public UUID getServiceEndpointId() {
+        return serviceEndpointId;
     }
 
     public UUID getTargetId() {
@@ -66,14 +72,32 @@ public class Connection implements Persistable<UUID> {
         return connecting;
     }
 
+    public UUID getAppId() {
+        return appId;
+    }
+
+    public void setAppId(UUID appId) {
+        this.appId = appId;
+    }
+
+    public UUID getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(UUID serviceId) {
+        this.serviceId = serviceId;
+    }
+
     @Override
     public String toString() {
         return "Connection{" +
                 "id=" + id +
                 ", connection='" + connection + '\'' +
-                ", appIdSource=" + appIdSource +
+                ", serviceEndpointId=" + serviceEndpointId +
                 ", targetId=" + targetId +
                 ", connecting='" + connecting + '\'' +
-                '}';
+                ", appId=" +appId +
+                ", serviceId="+serviceId +
+            '}';
     }
 }

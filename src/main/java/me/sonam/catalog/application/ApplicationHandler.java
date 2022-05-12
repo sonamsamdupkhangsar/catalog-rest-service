@@ -142,17 +142,6 @@ public class ApplicationHandler {
                         .fromValue(e.getMessage())));
     }
 
-    public Mono<ServerResponse> connect(ServerRequest serverRequest) {//ConnectionForm connectionForm) {
-        LOG.info("connect");
-        Mono<ConnectionForm> mono = serverRequest.bodyToMono(ConnectionForm.class);
-
-        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).
-                body(mono.flatMap(connectionForm ->
-                        applicationBehavior.connect(connectionForm)), String.class)
-                .onErrorResume(e -> ServerResponse.badRequest().body(BodyInserters
-                        .fromValue(e.getMessage())));
-    }
-
     public Mono<ServerResponse> getConnectedApps(ServerRequest serverRequest) {
         LOG.info("getConnectedApps");
         UUID applicationId = UUID.fromString(serverRequest.pathVariable("applicationId"));

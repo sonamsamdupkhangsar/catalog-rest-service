@@ -33,10 +33,13 @@ public class ConnectionRepositoryIntegTest {
 
     @Test
     public void save() {
-        UUID appIdSource = UUID.randomUUID();
+        UUID appId = UUID.randomUUID();
         UUID targetId = UUID.randomUUID();
+        UUID serviceEndpointId = UUID.randomUUID();
+        UUID serviceId = UUID.randomUUID();
 
-        Connection connection = new Connection(Connection.ConnectionType.READ, Connection.CONNECTING.APP.name(), appIdSource, targetId);
+        Connection connection = new Connection(Connection.ConnectionType.READ, Connection.CONNECTING.APP.name(),
+                serviceEndpointId,targetId, serviceId, appId);
 
         LOG.info("save connection");
         Mono<Connection> connectionMono = connectionRepository.save(connection);
@@ -44,7 +47,8 @@ public class ConnectionRepositoryIntegTest {
                 .assertNext(actual -> {
                     assertThat(actual.getConnecting()).isEqualTo(Connection.CONNECTING.APP.name());
                     assertThat(actual.getConnection()).isEqualTo(Connection.ConnectionType.READ.name());
-                    assertThat(actual.getAppIdSource()).isEqualTo(appIdSource);
+                    assertThat(actual.getServiceEndpointId()).isEqualTo(serviceEndpointId);
+                    assertThat(actual.getAppId()).isEqualTo(appId);
                     assertThat(actual.getTargetId()).isEqualTo(targetId);
                     LOG.info("verify complete");
                 })

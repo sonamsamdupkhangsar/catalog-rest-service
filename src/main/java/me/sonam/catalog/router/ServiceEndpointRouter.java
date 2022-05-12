@@ -45,7 +45,9 @@ public class ServiceEndpointRouter {
                 .andRoute(POST("/serviceendpoint")
                     .and(accept(MediaType.APPLICATION_JSON)), handler::update)
                 .andRoute(DELETE("/serviceendpoint/{serviceEndpointId}")
-                        .and(accept(MediaType.APPLICATION_JSON)), handler::delete);
+                        .and(accept(MediaType.APPLICATION_JSON)), handler::delete)
+                .andRoute(DELETE("/serviceendpoint/serviceId/{serviceId}")
+                .and(accept(MediaType.APPLICATION_JSON)), handler::deleteByServiceId);
 
     }
 }

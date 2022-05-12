@@ -135,6 +135,7 @@ public class Environment implements Persistable<UUID> {
                 ", deploymentLink='" + deploymentLink + '\'' +
                 ", clusterId=" + clusterId +
                 ", cluster=" + cluster +
+                ", isNew=" + isNew +
                 '}';
     }
 }
